@@ -8,6 +8,7 @@ import java.util.ArrayList;
 
 import com.iot.test.common.DBCon;
 import com.iot.test.dao.UserDAO;
+import com.iot.test.utils.DBUtil;
 import com.iot.test.vo.UserClass;
 
 public class UserDAOImpl implements UserDAO {
@@ -20,7 +21,7 @@ public class UserDAOImpl implements UserDAO {
 		ResultSet rs = null;
 		try {
 			con = DBCon.getCon();
-			String sql = "select * from user_info ui, class_info ci where ui.cino = ci.cino";
+			String sql = "select *,date_format(uiregdate,'%Y-%m-%d') as rdate from user_info ui, class_info ci where ui.cino = ci.cino";
 			ps = con.prepareStatement(sql);
 			rs = ps.executeQuery();
 			while (rs.next()) {
@@ -34,34 +35,15 @@ public class UserDAOImpl implements UserDAO {
 				uc.setUiName(rs.getString("uiname"));
 				uc.setUiNo(rs.getInt("uino"));
 				uc.setUiPwd(rs.getString("uipwd"));
-				uc.setUiRegdate(rs.getString("uiregdate"));
+				uc.setUiRegdate(rs.getString("rdate"));
 				userList.add(uc);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			if (rs != null) {
-				try {
-					rs.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-
-			}
-			if (ps != null) {
-				try {
-					ps.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-			if(con != null) {
-				try {
-					con.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
+			DBUtil.close(rs);
+			DBUtil.close(ps);
+			DBUtil.close(con);
 		}
 		return userList;
 	}
@@ -99,28 +81,9 @@ public class UserDAOImpl implements UserDAO {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			if (rs != null) {
-				try {
-					rs.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-
-			}
-			if (ps != null) {
-				try {
-					ps.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-			if(con != null) {
-				try {
-					con.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
+			DBUtil.close(rs);
+			DBUtil.close(ps);
+			DBUtil.close(con);
 		}
 		return null;
 	}
@@ -132,8 +95,8 @@ public class UserDAOImpl implements UserDAO {
 		ResultSet rs = null;
 		try {
 			con = DBCon.getCon();
-			String sql = "insert into user_info(uiname, uiage, uiid, uipwd, cino, uiregdate, address) "+
-					"values(?,?,?,?,?,now(),?)";
+			String sql = "insert into user_info(uiname, uiage, uiid, uipwd, cino, uiregdate, address) "
+					+ "values(?,?,?,?,?,now(),?)";
 			ps = con.prepareStatement(sql);
 			ps.setString(1, uc.getUiName());
 			ps.setInt(2, uc.getUiAge());
@@ -142,21 +105,57 @@ public class UserDAOImpl implements UserDAO {
 			ps.setInt(5, uc.getCiNo());
 			ps.setString(6, uc.getAddress());
 			return ps.executeUpdate();
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
-		return 0;
+			return 0;
+		} finally {
+			DBUtil.close(ps);
+			DBUtil.close(con);
+		}
 	}
-	}
-	
+
 	@Override
 	public int updateUser(UserClass uc) {
-		return 0;
+		Connection con = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		try {
+			con = DBCon.getCon();
+			String sql = "update user_info " + " set uiname=?, uiage=?, address=? where uino=?";
+			ps = con.prepareStatement(sql);
+			ps.setString(1, uc.getUiName());
+			ps.setInt(2, uc.getUiAge());
+			ps.setString(3, uc.getAddress());
+			ps.setInt(4, uc.getUiNo());
+			return ps.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return 0;
+		} finally {
+			DBUtil.close(ps);
+			DBUtil.close(con);
+		}
 	}
 
 	@Override
 	public int deleteUser(UserClass uc) {
-		return 0;
+		Connection con = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		try {
+			con = DBCon.getCon();
+			String sql = "delete from user_info where uiNo=?";
+			ps = con.prepareStatement(sql);
+			ps.setInt(1, uc.getUiNo());
+			return ps.executeUpdate();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return 0;
+		} finally {
+			DBUtil.close(ps);
+			DBUtil.close(con);
+		}
 	}
 }
-

@@ -1,10 +1,12 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
 <html lang="en">
 
     <meta charset="utf-8">
     <meta name="robots" content="noindex, nofollow">
 
     <title>IOT</title>
-	<jsp:include page="/WEB-INF/view/common/header.jsp" flush="false" />
+	<jsp:include page="/WEB-INF/view/common/header.jspf" flush="false" />
 	<main class="text-center py-5">
 <body>
     <div class="container">

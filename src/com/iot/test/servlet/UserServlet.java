@@ -25,47 +25,51 @@ public class UserServlet extends HttpServlet {
 	UserService us = new UserServiceImpl();
 	ClassService cs = new ClassServiceImpl();
 	Gson gs = new Gson();
+
 	public String getCommand(String uri) {
 		int idx = uri.lastIndexOf("/");
-		if(idx!=-1) {
-			return uri.substring(idx+1);
+		if (idx != -1) {
+			return uri.substring(idx + 1);
 		}
 		return "";
 	}
+
 	@Override
 	public void doGet(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
-		doProcess(req,res);
+		doProcess(req, res);
 	}
-	@Override
-	public void doPost(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException{
-		doProcess(req,res);
-	}
-	public  void doProcess(HttpServletRequest req, HttpServletResponse res)throws IOException, ServletException {
 
-		req.setCharacterEncoding("utf-8");
-		res.setCharacterEncoding("utf-8");
-		res.setContentType("text/html;charset=utf-8");
+	@Override
+	public void doPost(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
+		doProcess(req, res);
+	}
+
+	public void doProcess(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
+
 		PrintWriter out = res.getWriter();
 		String uri = req.getRequestURI();
 		String cmd = getCommand(uri);
-		if(cmd.equals("login")) {
-			HashMap<String,Object> hm = us.login(req);
+		if (cmd.equals("login")) {
+			HashMap<String, Object> hm = us.login(req);
 			out.println(gs.toJson(hm));
-		}else if(cmd.equals("logout")) {
+		} else if (cmd.equals("logout")) {
 			us.logout(req);
 			RequestDispatcher rd = req.getRequestDispatcher("/view/user/login");
-			rd.forward(req,res);
-		}else if(cmd.equals("signin")) {
+			rd.forward(req, res);
+		} else if (cmd.equals("signin")) {
 			us.signin(req);
 			out.println(req.getAttribute("resStr"));
-		}else if(cmd.equals("list")){
+		} else if (cmd.equals("list")) {
 			ArrayList<UserClass> userList = us.getUserList();
-		//	List<ClassInfo> classList = cs.getClassList();
-			//Map<String, List> uc = new HashMap<String, List>();
-			//uc.put("us", userList);
-			//uc.put("cl", classList);
+			// List<ClassInfo> classList = cs.getClassList();
+			// Map<String, List> uc = new HashMap<String, List>();
+			// uc.put("us", userList);
+			// uc.put("cl", classList);
 			out.println(gs.toJson(userList));
+		} else if (cmd.equals("delete")) {
+			out.println(us.deleteUser(req));
+		} else if (cmd.equals("update")) {
+			out.println(us.updateUser(req));
 		}
 	}
 }
-

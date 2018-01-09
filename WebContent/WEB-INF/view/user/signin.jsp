@@ -7,7 +7,7 @@
 </head>
 <link rel="stylesheet" href="<%=rootPath%>/ui/css/sign.css" />
 <body>
-	<jsp:include page="/WEB-INF/view/common/header.jsp" flush="false" />
+	<jsp:include page="/WEB-INF/view/common/header.jspf" flush="false" />
 
 	<div class="container">
 		<div class="starter-template">
@@ -47,7 +47,7 @@
 							class="form-control" placeholder="주소"></td>
 					</tr>
 					<tr>
-						<td colspan="2"> 
+						<td colspan=""> 
 							<input class="btn btn-lg btn-primary btn-block" type="button"
 								id="singnBtn" value="Signin" onclick="signin()">
 						</td>

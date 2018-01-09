@@ -2333,8 +2333,8 @@ th {
 }
 
 .table {
-	width: 100%;
-	max-width: 100%;
+	width: 150%;
+	max-width: 150%;
 	margin-bottom: 20px
 }
 
@@ -2373,7 +2373,7 @@ th {
 }
 
 .table-bordered {
-	border: 1px solid #ddd
+	border: 3px solid #ddd
 }
 
 .table-bordered>thead>tr>th, .table-bordered>tbody>tr>th,

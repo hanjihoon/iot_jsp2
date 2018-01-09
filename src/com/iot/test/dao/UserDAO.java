@@ -5,10 +5,15 @@ import java.util.ArrayList;
 import com.iot.test.vo.UserClass;
 
 public interface UserDAO {
-	ArrayList<UserClass> selectUserList();
-	UserClass selectUser(int uiNo);
-	UserClass selectUser(String uiId);
-	int insertUser(UserClass uc);
-	int updateUser(UserClass uc);
-	int deleteUser(UserClass uc);
+	public ArrayList<UserClass> selectUserList();
+
+	public UserClass selectUser(int uiNo);
+
+	public UserClass selectUser(String uiId);
+
+	public int insertUser(UserClass uc);
+
+	public int updateUser(UserClass uc);
+
+	public int deleteUser(UserClass uc);
 }

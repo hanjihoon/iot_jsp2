@@ -52,11 +52,11 @@ public class UserServiceImpl implements UserService {
 		String json = req.getParameter("param");
 		UserClass uc = gs.fromJson(json, UserClass.class);
 		int result = ud.insertUser(uc);
-		Map<String,String> rm = new HashMap<String, String>();
+		Map<String, String> rm = new HashMap<String, String>();
 		rm.put("result", "no");
 		rm.put("result", "실패했어 이유는 모르겠다!");
-		if(result==1) {
-			rm.put("result","ok");
+		if (result == 1) {
+			rm.put("result", "ok");
 			rm.put("msg", "성공했어~ 굿!");
 		}
 		req.setAttribute("resStr", gs.toJson(rm));
@@ -65,6 +65,38 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public ArrayList<UserClass> getUserList() {
 		return ud.selectUserList();
+	}
+
+	@Override
+	public String deleteUser(HttpServletRequest req) {
+		int uiNo = Integer.parseInt(req.getParameter("uiNo"));
+		UserClass uc = new UserClass();
+		uc.setUiNo(uiNo);
+		int result = ud.deleteUser(uc);
+		Map<String, String> rm = new HashMap<String, String>();
+		rm.put("result", "no");
+		rm.put("result", "실패했어 이유는 모르겠다!");
+		if (result == 1) {
+			rm.put("result", "ok");
+			rm.put("msg", "성공!!!!");
+		}
+		return gs.toJson(rm);
+
+	}
+
+	@Override
+	public String updateUser(HttpServletRequest req) {
+		String param = req.getParameter("param");
+		UserClass uc = gs.fromJson(param, UserClass.class);
+		int result = ud.updateUser(uc);
+		Map<String, String> rm = new HashMap<String, String>();
+		rm.put("result", "no");
+		rm.put("result", "수정에 실패하셨네요 ..");
+		if (result == 1) {
+			rm.put("result", "ok");
+			rm.put("msg", "수정 성공!!!!");
+		}
+		return gs.toJson(rm);
 	}
 
 }

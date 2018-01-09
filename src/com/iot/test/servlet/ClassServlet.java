@@ -37,15 +37,18 @@ public class ClassServlet extends HttpServlet {
 	}
 	public  void doProcess(HttpServletRequest req, HttpServletResponse res)throws IOException, ServletException {
 
-		req.setCharacterEncoding("utf-8");
-		res.setCharacterEncoding("utf-8");
-		res.setContentType("text/html;charset=utf-8");
 		PrintWriter out = res.getWriter();
 		String uri = req.getRequestURI();
 		String cmd = getCommand(uri);
 		if(cmd.equals("list")) {
 			List<ClassInfo> classList = cs.getClassList();
 			out.println(gs.toJson(classList));
+		}else if(cmd.equals("insert")) {
+			
+		}else if(cmd.equals("delete")) {
+			out.println(cs.deleteClass(req));
+		}else if(cmd.equals("update")) {
+			
 		}
 	}
 }

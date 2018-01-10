@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <html>
 <head>
@@ -11,7 +12,10 @@
 </head>
 <jsp:include page="/WEB-INF/view/common/header.jspf" flush="false" />
 <link rel="stylesheet" href="<%=rootPath%>/ui/css/list.css" />
+<c:import url="/class/list" var="url"></c:import>
+
 <body>
+
 	<div class="container">
 		<div class="row">
 			<div class="col-md-10 col-md-offset-1">
@@ -27,8 +31,6 @@
 							</div>
 						</div>
 					</div>
-							<c:import url="/class/list">
-							</c:import>
 					<div class="panel-body">
 						<table id="grid1" data-key="uiNo"
 							class="table table table-striped table-list">
@@ -54,6 +56,7 @@
 	</div>
 </body>
 <script>
+
 function updateUser(uiNo){
 	var uiName = $("#uiName" + uiNo).val().trim();
 	var uiAge = $("#uiAge" + uiNo).val().trim();
@@ -78,7 +81,6 @@ function updateUser(uiNo){
 
 function deleteUser(uiNo){
 	var isDelete = confirm("진짜 지울라고???");
-	alert(isDelete);
 	var param = "uiNo=" + uiNo;
 	if(isDelete){
 		$.ajax({
@@ -109,7 +111,6 @@ $(document).ready(function(){
 		url : '/user/list',
 		type : 'get',
 		success:function(res){
-			alert(res);
 			var list = JSON.parse(res);
 			var str ="";
 			for(var uc of list){

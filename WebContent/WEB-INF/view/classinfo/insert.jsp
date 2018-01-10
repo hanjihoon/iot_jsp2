@@ -8,7 +8,7 @@
 </head>
 <link rel="stylesheet" href="<%=rootPath%>/ui/css/sign.css" />
 <link rel="stylesheet" href="<%=rootPath%>/ui/css/bootstrap.min.css" />
-<body>
+<body style="background-color:ivory">
 <div class="container">
 		<div class="starter-template">
 

@@ -93,7 +93,7 @@ public class ClassDAOImpl implements ClassDAO {
 		PreparedStatement ps = null;
 		try {
 			con = DBCon.getCon();
-			String sql = "update from class_info " + "set ciname=?, cidesc=? "
+			String sql = "update class_info " + "set ciname=?, cidesc=? "
 					+ " where cino=?";
 			ps = con.prepareStatement(sql);
 			ps.setString(1, ci.getCiName());
@@ -142,7 +142,7 @@ public class ClassDAOImpl implements ClassDAO {
 	}
 
 	@Override
-	public List<ClassInfo> selectClassInfo(String ciName) {
+	public List<ClassInfo> selectClassInfo(String str) {
 		
 		List<ClassInfo> classList = new ArrayList<ClassInfo>();
 		Connection con = null;
@@ -150,10 +150,10 @@ public class ClassDAOImpl implements ClassDAO {
 		ResultSet rs = null;
 		try {
 			con = DBCon.getCon();
-			String sql = "select * from class_info " +
-			"where ciname=?";
-			ps = con.prepareStatement(sql);
-			ps.setString(1, ciName);
+			String sql1 = "select * from class_info " +
+			"where ciname like (?)";
+			ps = con.prepareStatement(sql1);
+			ps.setString(1, "%"+str+"%");
 			rs = ps.executeQuery();
 			while (rs.next()) {
 				ClassInfo ci = new ClassInfo();
@@ -161,7 +161,21 @@ public class ClassDAOImpl implements ClassDAO {
 				ci.setCiName(rs.getString("ciname"));
 				ci.setCiNo(rs.getInt("cino"));
 				classList.add(ci);
-			}
+			}	
+			ps = null;
+			rs = null;
+			String sql2 = "select * from class_info " +
+					"where cidesc like (?)";
+					ps = con.prepareStatement(sql2);
+					ps.setString(1, "%"+str+"%");
+					rs = ps.executeQuery();
+					while (rs.next()) {
+						ClassInfo ci = new ClassInfo();
+						ci.setCiDesc(rs.getString("cidesc"));
+						ci.setCiName(rs.getString("ciname"));
+						ci.setCiNo(rs.getInt("cino"));
+						classList.add(ci);
+					}
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {

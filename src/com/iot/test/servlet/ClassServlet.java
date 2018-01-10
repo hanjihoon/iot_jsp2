@@ -44,11 +44,12 @@ public class ClassServlet extends HttpServlet {
 			List<ClassInfo> classList = cs.getClassList();
 			out.println(gs.toJson(classList));
 		}else if(cmd.equals("insert")) {
-			
+			cs.insertClass(req);
+			out.println((String)req.getAttribute("resStr"));
 		}else if(cmd.equals("delete")) {
 			out.println(cs.deleteClass(req));
 		}else if(cmd.equals("update")) {
-			
+			out.println(cs.updateClass(req));
 		}
 	}
 }

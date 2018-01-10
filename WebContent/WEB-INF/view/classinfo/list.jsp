@@ -11,7 +11,7 @@
 <title>Class List</title>
 <jsp:include page="/WEB-INF/view/common/header.jspf" flush="false" />
 <link rel="stylesheet" href="<%=rootPath%>/ui/css/list.css" />
-<body>
+<body onload=classList()>
 	<div class="container">
 		<div class="row">
 			<div class="col-md-10 col-md-offset-1">
@@ -27,7 +27,7 @@
 							</div>
 							<div class="col col-xs-6 text-right">
 								<input type="text" class="input">
-								<button type="button" class="btn btn-sm btn-primary btn-create">검색</button>
+								<button type="button" class="btn btn-sm btn-primary btn-create onclick="selectClass()">검색</button>
 							</div>
 						</div>
 					</div>
@@ -43,15 +43,7 @@
 										class="glyphicon glyphicon-asterisk"></em></th>
 								</tr>
 							</thead>
-							<tbody id="result_tb">
-								<c:import url="/class/list" var="res">
-								</c:import>
-								<tr>
-									<td><input value="${res}"></td>
-								</tr>
-
-							</tbody>
-						</table>
+							</table>
 					</div>
 				</div>
 			</div>
@@ -59,11 +51,10 @@
 	</div>
 </body>
 <script>
-function updateClass(uiNo){
-	var uiName = $("#uiName" + uiNo).val().trim();
-	var uiAge = $("#uiAge" + uiNo).val().trim();
-	var address = $("#address" + uiNo).val().trim();
-	var param={uiNo:uiNo, uiName:uiName, uiAge:uiAge, address:address};
+function updateClass(ciNo){
+	var ciName = $("#ciName" + ciNo).val().trim();
+	var ciDesc = $("#ciDesc" + ciNo).val().trim();
+	var param={ciNo:ciNo, ciName:ciName, ciDesc:ciDesc};
 	param = "param=" + JSON.stringify(param);
 	$.ajax({
 		url : '/class/update',
@@ -89,10 +80,6 @@ function deleteUser(uiNo){
 			type : 'post',
 			dataType:'json',
 			success:function(res){
-				alert(res.msg);
-				if(res.result=='ok'){
-					location.reload();
-				}
 			},
 			error:function(xhr,status,error){
 			}
@@ -101,7 +88,6 @@ function deleteUser(uiNo){
 
 function deleteClass(ciNo){
 	var isDelete = confirm("진짜 지울라고???");
-	alert(isDelete);
 	if(isDelete){
 		$.ajax({
 			url : '/user/list',
@@ -127,27 +113,26 @@ function deleteClass(ciNo){
 					}
 				}
 			})
-			
-	var param = "ciNo=" + ciNo;
-		$.ajax({
-			url : '/class/delete',
-			data : param,
-			type : 'post',
-			dataType:'json',
-			success:function(res){
-				alert(res.msg);
-				if(res.result=='ok'){
-					location.reload();
-				}
-			},
-			error:function(xhr,status,error){
-			}
-		})
 	}
+	var param = "ciNo=" + ciNo;
+	$.ajax({
+		url : '/class/delete',
+		data : param,
+		type : 'post',
+		dataType:'json',
+		success:function(res){
+			alert(res.msg);
+			if(res.result=='ok'){
+				location.reload();
+			}
+		},
+		error:function(xhr,status,error){
+		}
+	})
 }
 
-var colsinfo = [];
-$(document).ready(function(){
+function classList(){
+	var colsinfo = [];
 	var colList = $("#grid1 th[data-field]");
 	for(var i=0;i<colList.length;i++){
 		colsinfo.push(colList[i].getAttribute("data-field"));
@@ -165,7 +150,7 @@ $(document).ready(function(){
 				for(var field of colsinfo){
 					str += "<td class='text-center'>";
 					if(field=="BTN"){
-						str += '<a class="btn btn-default" onclick="updateUser(' + key + ')"><em class="glyphicon glyphicon-pencil"></em></a>';
+						str += '<a class="btn btn-default" onclick="updateClass(' + key + ')"><em class="glyphicon glyphicon-pencil"></em></a>';
 						str += '<a class="btn btn-danger" onclick="deleteClass(' + key + ')"><em class="glyphicon glyphicon-trash"></em></a>';
 					}else{
 						var colName = field.split(",")[0];
@@ -185,8 +170,14 @@ $(document).ready(function(){
 		error:function(xhr,status,error){
 			
 		}
-	});
-});
+	})
+}
+
+
+function selectClass(){
+	document.getElementById("body").onload = '';
+	
+}
 
 function insertClass(){
 	//"uiName,uiAge,uiId,uiPwd,ciNo,address"
@@ -213,7 +204,7 @@ function insertClass(){
 
 function addonclick(){	
 	var url= "<%=rootPath%>/view/classinfo/insert";  
-	var winWidth = 800;
+	var winWidth = 750;
 	var winHeight = 300;
 	var popupOption= "width="+winWidth+", height="+winHeight;
 	window.open(url,"",popupOption)

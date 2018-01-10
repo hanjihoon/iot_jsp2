@@ -30,8 +30,17 @@ public class ClassServiceImpl implements ClassService {
 	
 	@Override
 	public void insertClass(HttpServletRequest req) {
-		
-		
+		String param = req.getParameter("param");
+		ClassInfo ci = gs.fromJson(param, ClassInfo.class);
+		int result = cdao.insertClass(ci);
+		Map<String, String> rm = new HashMap<String, String>();
+		rm.put("msg", "실패했어 이유는 모르겠다!");
+		rm.put("result", "no");
+		if (result == 1) {
+			rm.put("result", "ok");
+			rm.put("msg", "성공!!!!");
+		}
+		req.setAttribute("resStr", gs.toJson(rm));
 	}
 
 	@Override
@@ -52,8 +61,17 @@ public class ClassServiceImpl implements ClassService {
 
 	@Override
 	public String updateClass(HttpServletRequest req) {
-
-		return null;
+		String param = req.getParameter("param");
+		ClassInfo ci = gs.fromJson(param, ClassInfo.class);
+		int result = cdao.updateClass(ci);
+		Map<String, String> rm = new HashMap<String, String>();
+		rm.put("msg", "실패했어 이유는 모르겠다!");
+		rm.put("result", "no");
+		if (result == 1) {
+			rm.put("result", "ok");
+			rm.put("msg", "성공!!!!");
+		}
+		return gs.toJson(rm);
 	}
 
 

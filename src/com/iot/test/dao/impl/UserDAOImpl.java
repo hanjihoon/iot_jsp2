@@ -122,12 +122,13 @@ public class UserDAOImpl implements UserDAO {
 		ResultSet rs = null;
 		try {
 			con = DBCon.getCon();
-			String sql = "update user_info " + " set uiname=?, uiage=?, address=? where uino=?";
+			String sql = "update user_info " + " set uiname=?, uiage=?, address=?, cino=? where uino=?";
 			ps = con.prepareStatement(sql);
 			ps.setString(1, uc.getUiName());
 			ps.setInt(2, uc.getUiAge());
 			ps.setString(3, uc.getAddress());
-			ps.setInt(4, uc.getUiNo());
+			ps.setInt(4, uc.getCiNo());
+			ps.setInt(5, uc.getUiNo());
 			return ps.executeUpdate();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -158,4 +159,40 @@ public class UserDAOImpl implements UserDAO {
 			DBUtil.close(con);
 		}
 	}
-}
+
+	@Override
+	public ArrayList<UserClass> searchUser(String str) {
+		ArrayList<UserClass> userList = new ArrayList<UserClass>();
+		Connection con = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		try {
+			con = DBCon.getCon();
+			String sql = "select *,date_format(uiregdate,'%Y-%m-%d') as rdate from user_info where uiid like (?) or uiname like (?) or address like (?)";
+			ps = con.prepareStatement(sql);
+			ps.setString(1, "%"+str+"%");
+			ps.setString(2, "%"+str+"%");
+			ps.setString(3, "%"+str+"%");
+			rs = ps.executeQuery();
+			while (rs.next()) {
+				UserClass uc = new UserClass();
+				uc.setAddress(rs.getString("address"));
+				uc.setCiNo(rs.getInt("cino"));
+				uc.setUiAge(rs.getInt("uiage"));
+				uc.setUiId(rs.getString("uiid"));
+				uc.setUiName(rs.getString("uiname"));
+				uc.setUiNo(rs.getInt("uino"));
+				uc.setUiPwd(rs.getString("uipwd"));
+				uc.setUiRegdate(rs.getString("rdate"));
+				userList.add(uc);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			DBUtil.close(rs);
+			DBUtil.close(ps);
+			DBUtil.close(con);
+		}
+		return userList;
+	}
+} 

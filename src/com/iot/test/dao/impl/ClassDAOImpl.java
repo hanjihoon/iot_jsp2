@@ -150,10 +150,10 @@ public class ClassDAOImpl implements ClassDAO {
 		ResultSet rs = null;
 		try {
 			con = DBCon.getCon();
-			String sql1 = "select * from class_info " +
-			"where ciname like (?)";
+			String sql1 = "select * from class_info where ciname like (?) or cidesc like (?)";
 			ps = con.prepareStatement(sql1);
 			ps.setString(1, "%"+str+"%");
+			ps.setString(2, "%"+str+"%");
 			rs = ps.executeQuery();
 			while (rs.next()) {
 				ClassInfo ci = new ClassInfo();
@@ -162,20 +162,6 @@ public class ClassDAOImpl implements ClassDAO {
 				ci.setCiNo(rs.getInt("cino"));
 				classList.add(ci);
 			}	
-			ps = null;
-			rs = null;
-			String sql2 = "select * from class_info " +
-					"where cidesc like (?)";
-					ps = con.prepareStatement(sql2);
-					ps.setString(1, "%"+str+"%");
-					rs = ps.executeQuery();
-					while (rs.next()) {
-						ClassInfo ci = new ClassInfo();
-						ci.setCiDesc(rs.getString("cidesc"));
-						ci.setCiName(rs.getString("ciname"));
-						ci.setCiNo(rs.getInt("cino"));
-						classList.add(ci);
-					}
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {

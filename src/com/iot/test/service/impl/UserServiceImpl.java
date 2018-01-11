@@ -32,14 +32,13 @@ public class UserServiceImpl implements UserService {
 				hm.put("msg", "비밀번호를 확인하세요~!");
 				hm.put("login", "no");
 			} else {
-				System.out.println(uc.isSaveId());
 				Cookie cId = new Cookie("userId", uc.getUiId());
 				cId.setPath("/");
-				Cookie cSave = new Cookie("saveId", ""+uc.isSaveId());
+				Cookie cSave = new Cookie("saveId", "" + uc.isSaveId());
 				cSave.setPath("/");
 				int maxAge = 0;
-				if(uc.isSaveId()) {
-					maxAge=24*60*60;
+				if (uc.isSaveId()) {
+					maxAge = 24 * 60 * 60;
 				}
 				cId.setMaxAge(maxAge);
 				cSave.setMaxAge(maxAge);
@@ -67,14 +66,7 @@ public class UserServiceImpl implements UserService {
 		String json = req.getParameter("param");
 		UserClass uc = gs.fromJson(json, UserClass.class);
 		int result = ud.insertUser(uc);
-		Map<String, String> rm = new HashMap<String, String>();
-		rm.put("result", "no");
-		rm.put("result", "실패했어 이유는 모르겠다!");
-		if (result == 1) {
-			rm.put("result", "ok");
-			rm.put("msg", "성공했어~ 굿!");
-		}
-		req.setAttribute("resStr", gs.toJson(rm));
+		req.setAttribute("resStr", gs.toJson(checkValue(result)));
 	}
 
 	@Override
@@ -83,19 +75,18 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
+	public ArrayList<UserClass> getUser(HttpServletRequest req) {
+
+		return ud.searchUser(req.getParameter("str"));
+	}
+
+	@Override
 	public String deleteUser(HttpServletRequest req) {
 		int uiNo = Integer.parseInt(req.getParameter("uiNo"));
 		UserClass uc = new UserClass();
 		uc.setUiNo(uiNo);
 		int result = ud.deleteUser(uc);
-		Map<String, String> rm = new HashMap<String, String>();
-		rm.put("result", "no");
-		rm.put("result", "실패했어 이유는 모르겠다!");
-		if (result == 1) {
-			rm.put("result", "ok");
-			rm.put("msg", "성공!!!!");
-		}
-		return gs.toJson(rm);
+		return gs.toJson(checkValue(result));
 
 	}
 
@@ -104,14 +95,21 @@ public class UserServiceImpl implements UserService {
 		String param = req.getParameter("param");
 		UserClass uc = gs.fromJson(param, UserClass.class);
 		int result = ud.updateUser(uc);
+		return gs.toJson(checkValue(result));
+	}
+	
+	@Override
+	public Map<String, String> checkValue(int a) {
+
 		Map<String, String> rm = new HashMap<String, String>();
+		rm.put("msg", "실패했어 이유는 모르겠다!");
 		rm.put("result", "no");
-		rm.put("result", "수정에 실패하셨네요 ..");
-		if (result == 1) {
+		if (a == 1) {
 			rm.put("result", "ok");
-			rm.put("msg", "수정 성공!!!!");
+			rm.put("msg", "성공!!!!");
 		}
-		return gs.toJson(rm);
+
+		return rm;
 	}
 
 }

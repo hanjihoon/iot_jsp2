@@ -11,7 +11,7 @@
 <title>Class List</title>
 <jsp:include page="/WEB-INF/view/common/header.jspf" flush="false" />
 <link rel="stylesheet" href="<%=rootPath%>/ui/css/list.css" />
-<body onload=classList()>
+<body>
 	<div class="container">
 		<div class="row">
 			<div class="col-md-10 col-md-offset-1">
@@ -26,8 +26,9 @@
 								</h2>
 							</div>
 							<div class="col col-xs-6 text-right">
-								<input type="text" class="input">
-								<button type="button" class="btn btn-sm btn-primary btn-create onclick="selectClass()">검색</button>
+								<input type="text" id="select" class="input">
+								<button type="button"
+									class="btn btn-sm btn-primary btn-create" onclick="selectClass()">검색</button>
 							</div>
 						</div>
 					</div>
@@ -43,7 +44,9 @@
 										class="glyphicon glyphicon-asterisk"></em></th>
 								</tr>
 							</thead>
-							</table>
+							<tbody id="result_tb">
+							</tbody>
+						</table>
 					</div>
 				</div>
 			</div>
@@ -131,8 +134,8 @@ function deleteClass(ciNo){
 	})
 }
 
-function classList(){
-	var colsinfo = [];
+var colsinfo = [];
+$(document).ready(function(){
 	var colList = $("#grid1 th[data-field]");
 	for(var i=0;i<colList.length;i++){
 		colsinfo.push(colList[i].getAttribute("data-field"));
@@ -167,17 +170,56 @@ function classList(){
 			}
 			$("#result_tb").html(str);
 		},
-		error:function(xhr,status,error){
-			
+		error:function(xhr,status,error){	
 		}
-	})
-}
+	});
+});
 
 
 function selectClass(){
-	document.getElementById("body").onload = '';
-	
+	var colsinfo = [];
+	var colList = $("#grid1 th[data-field]");
+	for(var i=0;i<colList.length;i++){
+	colsinfo.push(colList[i].getAttribute("data-field"));
+	}
+	var keyCol = $("#grid1").attr("data-key");
+	var param = "param=" + $("#select").val();
+	$.ajax({
+		url : '/class/info',
+		type : 'get',
+		data : param,
+		success:function(res){
+			var list = JSON.parse(res);
+			var str ="";
+			for(var uc of list){
+				var key = uc[keyCol];
+				str += "<tr>";
+				for(var field of colsinfo){
+					str += "<td class='text-center'>";
+					if(field=="BTN"){
+						str += '<a class="btn btn-default" onclick="updateClass(' + key + ')"><em class="glyphicon glyphicon-pencil"></em></a>';
+						str += '<a class="btn btn-danger" onclick="deleteClass(' + key + ')"><em class="glyphicon glyphicon-trash"></em></a>';
+					}else{
+						var colName = field.split(",")[0];
+						var colType = field.split(",")[1];
+						if(colType=="ro"){
+							str += uc[colName];
+						}else{
+						str += "<input type='text' class='text-center' style='border-style:inset; width:100px;' id='"+colName + key + "' value='" + uc[colName] + "'>";
+						}
+					}
+					str += "</td>";
+				}
+				str += "</tr>";
+			}
+			$("#result_tb").html(str);
+		},
+		error:function(xhr,status,error){	
+		}
+	})
 }
+	
+
 
 function insertClass(){
 	//"uiName,uiAge,uiId,uiPwd,ciNo,address"
@@ -207,7 +249,7 @@ function addonclick(){
 	var winWidth = 750;
 	var winHeight = 300;
 	var popupOption= "width="+winWidth+", height="+winHeight;
-	window.open(url,"",popupOption)
+	window.open(url, "", popupOption)
 }
 </script>
 </html>

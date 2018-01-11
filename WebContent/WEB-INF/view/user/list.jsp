@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
-<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
 <html>
 <head>
@@ -26,8 +26,9 @@
 								<h3 class="panel-title">User List</h3>
 							</div>
 							<div class="col col-xs-6 text-right">
-								<input type="text" class="input">
-								<button type="button" class="btn btn-sm btn-primary btn-create">검색</button>
+								<input type="text" id="search" class="input">
+								<button type="button" class="btn btn-sm btn-primary btn-create"
+									onclick="searchuser()">검색</button>
 							</div>
 						</div>
 					</div>
@@ -42,6 +43,7 @@
 									<th class="text-center" data-field="uiId,ro">ID</th>
 									<th class="text-center" data-field="uiRegdate,ro">가입일자</th>
 									<th class="text-center" data-field="address,txt">주소</th>
+									<th class="text-center" data-field="ciNo">반</th>
 									<th class="text-center" data-field="BTN"><em
 										class="glyphicon glyphicon-asterisk"></em></th>
 								</tr>
@@ -61,7 +63,8 @@ function updateUser(uiNo){
 	var uiName = $("#uiName" + uiNo).val().trim();
 	var uiAge = $("#uiAge" + uiNo).val().trim();
 	var address = $("#address" + uiNo).val().trim();
-	var param={uiNo:uiNo, uiName:uiName, uiAge:uiAge, address:address};
+	var ciNo = $("#sel" + uiNo).val();
+	var param={uiNo:uiNo, uiName:uiName, uiAge:uiAge, address:address, ciNo:ciNo};
 	param = "param=" + JSON.stringify(param);
 	$.ajax({
 		url : '/user/update',
@@ -113,7 +116,7 @@ $(document).ready(function(){
 		success:function(res){
 			var list = JSON.parse(res);
 			var str ="";
-			for(var uc of list){
+			for(var uc of list.us){
 				var key = uc[keyCol];
 				str += "<tr>";
 				for(var field of colsinfo){
@@ -126,7 +129,20 @@ $(document).ready(function(){
 						var colType = field.split(",")[1];
 						if(colType=="ro"){
 							str += uc[colName];
-						}else{
+						}else if(colName=="ciNo"){
+							str += "<select id='sel" + key + "' >";
+							for(var c of list["cl"]){
+							if(c.ciNo==uc[colName]){
+								str += "<option value='" + c.ciNo + "'>" + c.ciName + "</option>";
+							}
+						}	
+							for(var c of list["cl"]){
+								if(c.ciNo!=uc[colName]){
+									str += "<option value='" + c.ciNo + "'>" + c.ciName + "</option>";
+								}
+						}
+							str += '</select>';
+						}else{						
 						str += "<input type='text' class='text-center' style='border-style:inset; width:100px;' id='"+colName + key + "' value='" + uc[colName] + "'>";
 						}
 					}
@@ -136,11 +152,66 @@ $(document).ready(function(){
 			}
 			$("#result_tb").html(str);
 		},
-		error:function(xhr,status,error){
-			
+		error:function(xhr,status,error){	
 		}
 	});
-	
 });
+
+function searchuser(){
+	var colsinfo = [];
+	var colList = $("#grid1 th[data-field]");
+	for(var i=0;i<colList.length;i++){
+	colsinfo.push(colList[i].getAttribute("data-field"));
+	}
+	var keyCol = $("#grid1").attr("data-key");
+	var param = "str=" + $("#search").val();
+	$.ajax({
+		url : '/user/user',
+		type : 'get',
+		data : param,
+		success:function(res){
+			alert(res);
+			var list = JSON.parse(res);
+			var str ="";
+			for(var uc of list.us){
+				var key = uc[keyCol];
+				str += "<tr>";
+				for(var field of colsinfo){
+					str += "<td class='text-center'>";
+					if(field=="BTN"){
+						str += '<a class="btn btn-default" onclick="updateUser(' + key + ')"><em class="glyphicon glyphicon-pencil"></em></a>';
+						str += '<a class="btn btn-danger" onclick="deleteUser(' + key + ')"><em class="glyphicon glyphicon-trash"></em></a>';
+					}else{
+						var colName = field.split(",")[0];
+						var colType = field.split(",")[1];
+						if(colType=="ro"){
+							str += uc[colName];
+						}else if(colName=="ciNo"){
+							str += "<select id='sel" + key + "' >";
+							for(var c of list["cl"]){
+							if(c.ciNo==uc[colName]){
+								str += "<option value='" + c.ciNo + "'>" + c.ciName + "</option>";
+							}
+						}	
+							for(var c of list["cl"]){
+								if(c.ciNo!=uc[colName]){
+									str += "<option value='" + c.ciNo + "'>" + c.ciName + "</option>";
+								}
+						}
+							str += '</select>';
+						}else{						
+						str += "<input type='text' class='text-center' style='border-style:inset; width:100px;' id='"+colName + key + "' value='" + uc[colName] + "'>";
+						}
+					}
+					str += "</td>";
+				}
+				str += "</tr>";
+			}
+			$("#result_tb").html(str);
+		},
+		error:function(xhr,status,error){	
+		}
+	})
+}
 </script>
 </html>

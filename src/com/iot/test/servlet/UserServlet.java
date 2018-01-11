@@ -50,7 +50,7 @@ public class UserServlet extends HttpServlet {
 		String uri = req.getRequestURI();
 		String cmd = getCommand(uri);
 		if (cmd.equals("login")) {
-			HashMap<String, Object> hm = us.login(req,res);
+			HashMap<String, Object> hm = us.login(req, res);
 			out.println(gs.toJson(hm));
 		} else if (cmd.equals("logout")) {
 			us.logout(req);
@@ -61,15 +61,22 @@ public class UserServlet extends HttpServlet {
 			out.println(req.getAttribute("resStr"));
 		} else if (cmd.equals("list")) {
 			ArrayList<UserClass> userList = us.getUserList();
-			// List<ClassInfo> classList = cs.getClassList();
-			// Map<String, List> uc = new HashMap<String, List>();
-			// uc.put("us", userList);
-			// uc.put("cl", classList);
-			out.println(gs.toJson(userList));
+			List<ClassInfo> classList = cs.getClassList();
+			Map<String, List> uc = new HashMap<String, List>();
+			uc.put("us", userList);
+			uc.put("cl", classList);
+			out.println(gs.toJson(uc));
 		} else if (cmd.equals("delete")) {
 			out.println(us.deleteUser(req));
 		} else if (cmd.equals("update")) {
 			out.println(us.updateUser(req));
+		} else if (cmd.equals("user")) {
+			List<ClassInfo> classList = cs.getClassList();
+			ArrayList<UserClass> user = us.getUser(req);
+			Map<String, List> uc = new HashMap<String, List>();
+			uc.put("us", user);
+			uc.put("cl", classList);
+			out.println(gs.toJson(uc));
+			}
 		}
 	}
-}

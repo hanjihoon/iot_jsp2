@@ -11,6 +11,8 @@ public interface UserDAO {
 
 	public UserClass selectUser(String uiId);
 
+	public ArrayList<UserClass> searchUser(String uiId);
+
 	public int insertUser(UserClass uc);
 
 	public int updateUser(UserClass uc);

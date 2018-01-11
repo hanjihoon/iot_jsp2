@@ -15,32 +15,25 @@ import com.iot.test.vo.ClassInfo;
 public class ClassServiceImpl implements ClassService {
 	private Gson gs = new Gson();
 	private ClassDAO cdao = new ClassDAOImpl();
+
 	@Override
 	public List<ClassInfo> getClassList() {
-		
+
 		return cdao.selectClassList();
 	}
-	
+
 	@Override
-	public List<ClassInfo> getClassinfo() {
-		
-		return null;
+	public List<ClassInfo> getClassInfo(HttpServletRequest req) {
+		String str = req.getParameter("param");
+		return cdao.selectClassInfo(str);
 	}
 
-	
 	@Override
 	public void insertClass(HttpServletRequest req) {
 		String param = req.getParameter("param");
 		ClassInfo ci = gs.fromJson(param, ClassInfo.class);
 		int result = cdao.insertClass(ci);
-		Map<String, String> rm = new HashMap<String, String>();
-		rm.put("msg", "실패했어 이유는 모르겠다!");
-		rm.put("result", "no");
-		if (result == 1) {
-			rm.put("result", "ok");
-			rm.put("msg", "성공!!!!");
-		}
-		req.setAttribute("resStr", gs.toJson(rm));
+		req.setAttribute("resStr", gs.toJson(checkValue(result)));
 	}
 
 	@Override
@@ -49,14 +42,8 @@ public class ClassServiceImpl implements ClassService {
 		ClassInfo ci = new ClassInfo();
 		ci.setCiNo(ciNo);
 		int result = cdao.deleteClass(ci);
-		Map<String, String> rm = new HashMap<String, String>();
-		rm.put("msg", "실패했어 이유는 모르겠다!");
-		rm.put("result", "no");
-		if (result == 1) {
-			rm.put("result", "ok");
-			rm.put("msg", "성공!!!!");
-		}
-		return gs.toJson(rm);
+
+		return gs.toJson(checkValue(result));
 	}
 
 	@Override
@@ -64,20 +51,22 @@ public class ClassServiceImpl implements ClassService {
 		String param = req.getParameter("param");
 		ClassInfo ci = gs.fromJson(param, ClassInfo.class);
 		int result = cdao.updateClass(ci);
+
+		return gs.toJson(checkValue(result));
+	}
+
+	@Override
+	public Map<String, String> checkValue(int a) {
+
 		Map<String, String> rm = new HashMap<String, String>();
 		rm.put("msg", "실패했어 이유는 모르겠다!");
 		rm.put("result", "no");
-		if (result == 1) {
+		if (a == 1) {
 			rm.put("result", "ok");
 			rm.put("msg", "성공!!!!");
 		}
-		return gs.toJson(rm);
+
+		return rm;
 	}
-
-
-	
-
-
-	
 
 }

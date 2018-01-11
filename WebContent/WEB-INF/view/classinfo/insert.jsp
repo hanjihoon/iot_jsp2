@@ -48,7 +48,6 @@ function insertClass(){
 		type : 'post',
 		data : param,
 		success:function(res){
-			alert(res);
 			var obj = JSON.parse(res);
 			alert(obj.msg);
 			if(obj.result=="ok"){
